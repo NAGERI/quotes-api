@@ -1,0 +1,23 @@
+{
+  "name": "Quote-API",
+  "version": "1.0.0",
+  "description": "Quote API",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon server.js",
+    "prisma": "npx prisma migrate dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.12.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "http-status-codes": "^2.3.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.0",
+    "prisma": "^5.12.1"
+  }
+}
