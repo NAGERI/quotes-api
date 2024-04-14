@@ -14,15 +14,22 @@ datasource db {
 }
 
 model Author {
-  id     Int     @id @default(autoincrement())
-  name   String  @unique
-  age    Int
-  quotes Quote[]
+  id       Int    @id @default(autoincrement())
+  name     String @unique
+  password String
+  age      Int
+  quoteId  Int?
+  role     Role   @default(USER)
+  Quote    Quote? @relation(fields: [quoteId], references: [id])
 }
 
 model Quote {
-  id       Int    @id @default(autoincrement())
-  text     String
-  authorId Int
-  author   Author @relation(fields: [authorId], references: [id])
+  id      Int      @id @default(autoincrement())
+  text    String
+  authors Author[]
+}
+
+enum Role {
+  ADMIN
+  USER
 }

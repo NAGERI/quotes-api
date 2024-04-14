@@ -1,9 +1,20 @@
-import express from 'express'
+import express from "express";
 
-import {getQuotes} from "../controllers/quote.controller.js"
+import { quotes } from "../controllers/quote.controller.js";
+import { checkReqForAuthToken } from "../utils/jwt-auth.js";
+import { validateReqQuotes } from "../utils/data-valdation.js";
 
-const quoteRouter = express.Router()
+const quotesRouter = express.Router();
 
-quoteRouter.get("/", getQuotes)
+quotesRouter
+  .route("/")
+  .get(quotes.getAllQuotes)
+  .post([validateReqQuotes], quotes.createQuote);
 
-export default quoteRouter;
+quotesRouter
+  .route("/:id")
+  .get(checkReqForAuthToken, quotes.getQuote)
+  .patch([checkReqForAuthToken, validateReqQuotes], quotes.updateQuote)
+  .delete([checkReqForAuthToken], quotes.deleteQuote);
+
+export default quotesRouter;
