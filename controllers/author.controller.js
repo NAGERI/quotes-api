@@ -208,7 +208,7 @@ const authorLogin = async (req, res) => {
         .json({ message: "Login Successful ✔", token });
     } else {
       return res
-        .status(StatusCodes.FORBIDDEN)
+        .status(StatusCodes.NOT_FOUND)
         .json({ message: "Access denied ✖ Password is incorrect!" });
     }
   } catch (error) {
@@ -224,7 +224,7 @@ const authorRegister = async (req, res) => {
   const payload = {
     name: name,
     password: hashed,
-    author_role: "STUDENT",
+    author_role: "USER",
   };
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "1h",
@@ -239,7 +239,9 @@ const authorRegister = async (req, res) => {
       .status(StatusCodes.CREATED)
       .json({ message: "Author Created", token, newAuthor });
   } catch (error) {
-    return res.status(StatusCodes.BAD_GATEWAY).json({ error });
+    return res
+      .status(StatusCodes.BAD_GATEWAY)
+      .json({ error, message: "Failed to create author" });
   }
 };
 export const authors = {

@@ -20,6 +20,13 @@ jobs:
       uses: actions/setup-node@v4.0.2
       with:
         node-version: '18.x'
+    - name: load env variables
+       env:
+           DB_HOST: ${{ secrets.DB_HOST }}
+           DB_USER: ${{ secrets.DB_USER }}
+           DB_PASS: ${{ secrets.DB_PASS }}    
+    - name: Run Prisma query
+      run: npx prisma query
 
     - name: Install dependencies
       run: npm install
