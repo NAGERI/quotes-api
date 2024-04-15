@@ -3,6 +3,7 @@ import express from "express";
 import morgan from "morgan";
 import authorRouter from "./routes/author.route.js";
 import quotesRouter from "./routes/quote.route.js";
+import authRouter from "./routes/auth.route.js";
 
 const app = express();
 
@@ -15,9 +16,12 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+app.use("/api/auth", authRouter);
 app.use("/api/authors", authorRouter);
 app.use("/api/quotes", quotesRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Server listening on port ${PORT}`);
+// });
+
+export default app;

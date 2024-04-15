@@ -38,8 +38,9 @@ const getAllAuthors = async (req, res) => {
 const getAuthor = async (req, res) => {
   const { id } = req.params;
   if (!id) {
-    res.status(400).json({ msg: "Please provide Author ID!" });
-    return;
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Please provide Author ID!" });
   }
   try {
     // Query the database.
@@ -53,10 +54,18 @@ const getAuthor = async (req, res) => {
         role: true,
       },
     });
-    res.status(StatusCodes.OK).json(author);
+    console.log(author);
+    if (!author) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ msg: "Author not Found!" });
+    }
+    return res.status(StatusCodes.OK).json(author);
   } catch (error) {
     await prisma.$disconnect();
-    res.status(StatusCodes.NOT_FOUND).json({ msg: "Author not Found!" });
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ msg: "Error getting Author", error });
   }
 };
 
@@ -68,32 +77,32 @@ const getAuthor = async (req, res) => {
  */
 const updateAuthor = async (req, res) => {
   const { id } = req.params;
-  const { ...vals } = req.body;
+  const { name, age } = req.body;
   if (!id) {
     return res
       .status(StatusCodes.NOT_ACCEPTABLE)
       .json({ msg: "Please provide Author ID!" });
   }
   try {
-    let { name } = req.body;
     const existingAuthor = await prisma.author.findUnique({
-      where: { name: name },
+      where: { id: Number(id) },
     });
 
-    if (existingAuthor) {
-      const updatedAuthor = await prisma.author.updateMany({
-        where: { id: Number(id) },
-        data: {
-          name: vals.name,
-          age: vals.age,
-        },
-      });
-      return res.status(StatusCodes.OK).json(updatedAuthor);
-    } else {
+    if (!existingAuthor) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Author not Found." });
     }
+
+    const updatedAuthor = await prisma.author.updateMany({
+      where: { id: Number(id) },
+      data: {
+        name,
+        age,
+      },
+    });
+
+    return res.status(StatusCodes.OK).json(updatedAuthor);
   } catch (error) {
     await prisma.$disconnect();
     return res.status(StatusCodes.NOT_FOUND).json({ error });
@@ -147,29 +156,46 @@ const deleteAuthor = async (req, res) => {
       .status(StatusCodes.NOT_ACCEPTABLE)
       .json({ msg: "Please provide Author ID!" });
   }
-  const author = await prisma.author.delete({
-    where: { id: Number(id) },
-  });
-  return res.status(StatusCodes.NO_CONTENT).json(author);
+
+  try {
+    const author = await prisma.author.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!author) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ msg: "Author not found" });
+    }
+
+    await prisma.author.delete({
+      where: { id: Number(id) },
+    });
+
+    return res.status(StatusCodes.NO_CONTENT).end();
+  } catch (error) {
+    await prisma.$disconnect();
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+  }
 };
 
 const authorLogin = async (req, res) => {
-  const { authorname, password } = req.body;
+  const { name, password } = req.body;
 
-  if (!authorname || !password) {
+  if (!name || !password) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .send("Please provide Username & Password!");
   }
   try {
     const author = await prisma.author.findUnique({
-      where: { name: authorname },
+      where: { name: name },
     });
     let authorDBPassword = await bcrypt.compare(password, author.password);
 
     if (authorDBPassword) {
       const payload = {
-        authorname,
+        name,
         password: author.password,
         author_role: author.role,
       };
@@ -196,7 +222,7 @@ const authorRegister = async (req, res) => {
   const hashed = await bcrypt.hash(password, saltRounds);
 
   const payload = {
-    authorname: name,
+    name: name,
     password: hashed,
     author_role: "STUDENT",
   };

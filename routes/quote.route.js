@@ -8,7 +8,7 @@ const quotesRouter = express.Router();
 
 quotesRouter
   .route("/")
-  .get(quotes.getAllQuotes)
+  .get(checkReqForAuthToken, quotes.getAllQuotes)
   .post([validateReqQuotes], quotes.createQuote);
 
 quotesRouter

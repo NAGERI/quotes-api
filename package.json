@@ -1,5 +1,5 @@
 {
-  "name": "Quote-API",
+  "name": "quote-api",
   "version": "1.2.0",
   "description": "Quote API",
   "main": "server.js",
@@ -7,7 +7,7 @@
   "scripts": {
     "start": "nodemon server.js",
     "prisma": "npx prisma migrate dev",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -23,7 +23,16 @@
     "nodemon": "^3.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.24.4",
+    "@babel/preset-env": "^7.24.4",
+    "@types/jest": "^29.5.12",
+    "@types/supertest": "^6.0.2",
+    "babel-jest": "^29.7.0",
+    "esm": "^3.2.25",
+    "jest": "^29.7.0",
     "morgan": "^1.10.0",
-    "prisma": "^5.11.0"
+    "prisma": "^5.11.0",
+    "supertest": "^6.3.4",
+    "ts-jest": "^29.1.2"
   }
 }
