@@ -10,7 +10,7 @@ const quotesRouter = express.Router();
 quotesRouter
   .route("/")
   .get([checkReqForAuthToken, isUser], quotes.getAllQuotes)
-  .post([validateReqQuotes, isAdmin], quotes.createQuote);
+  .post([checkReqForAuthToken, validateReqQuotes, isAdmin], quotes.createQuote);
 
 quotesRouter
   .route("/:id")

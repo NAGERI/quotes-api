@@ -6,7 +6,7 @@ const quoteSchema = Joi.object().keys({
   authorId: Joi.number().integer(),
 });
 const authorSchema = Joi.object().keys({
-  name: Joi.string().alphanum().min(5).max(50).required(),
+  name: Joi.string().min(5).max(50).required(),
   age: Joi.number().integer().min(18),
   password: Joi.string().min(8).required(),
   quoteId: Joi.number().integer(),
@@ -14,7 +14,7 @@ const authorSchema = Joi.object().keys({
 });
 
 const authorUpdateSchema = Joi.object().keys({
-  name: Joi.string().alphanum().min(5).max(50).required(),
+  name: Joi.string().min(5).max(50).required(),
   age: Joi.number().integer().min(18),
   quoteId: Joi.number().integer(),
   role: Joi.string(),
@@ -39,7 +39,9 @@ const validateReqAuthor = (req, res, next) => {
 };
 
 const validateUpdateReqAuthor = (req, res, next) => {
-  const { error } = authorSchema.validate(req.body, { abortEarly: false });
+  const { error } = authorUpdateSchema.validate(req.body, {
+    abortEarly: false,
+  });
   if (error) {
     const errors = error.details.map((detail) => detail.message);
     return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ errors });

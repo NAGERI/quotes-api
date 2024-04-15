@@ -12,8 +12,11 @@ const authorRouter = express.Router();
 
 authorRouter
   .route("/")
-  .get([checkReqForAuthToken, isUser], authors.getAllAuthors)
-  .post([validateReqAuthor, isAdmin], authors.createAuthor);
+  .get([checkReqForAuthToken, isAdmin || isUser], authors.getAllAuthors)
+  .post(
+    [checkReqForAuthToken, validateReqAuthor, isAdmin],
+    authors.createAuthor
+  );
 
 authorRouter
   .route("/:id")
