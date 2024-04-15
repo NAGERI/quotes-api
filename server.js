@@ -20,8 +20,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/authors", authorRouter);
 app.use("/api/quotes", quotesRouter);
 
-// app.listen(PORT, () => {
-//   console.log(`Server listening on port ${PORT}`);
-// });
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
 
 export default app;

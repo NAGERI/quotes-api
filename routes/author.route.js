@@ -6,17 +6,21 @@ import {
   validateReqAuthor,
   validateUpdateReqAuthor,
 } from "../utils/data-valdation.js";
+import { isAdmin, isUser } from "../utils/middleware.js";
 
 const authorRouter = express.Router();
 
 authorRouter
   .route("/")
-  .get(authors.getAllAuthors)
-  .post([validateReqAuthor], authors.createAuthor);
+  .get([checkReqForAuthToken, isUser], authors.getAllAuthors)
+  .post([validateReqAuthor, isAdmin], authors.createAuthor);
 
 authorRouter
   .route("/:id")
-  .get(checkReqForAuthToken, authors.getAuthor)
-  .patch([checkReqForAuthToken, validateUpdateReqAuthor], authors.updateAuthor)
-  .delete([checkReqForAuthToken], authors.deleteAuthor);
+  .get([checkReqForAuthToken, isUser], authors.getAuthor)
+  .patch(
+    [checkReqForAuthToken, validateUpdateReqAuthor, isAdmin],
+    authors.updateAuthor
+  )
+  .delete([checkReqForAuthToken, isAdmin], authors.deleteAuthor);
 export default authorRouter;
