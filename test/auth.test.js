@@ -18,11 +18,11 @@ describe("authorRegister", () => {
     bcrypt.hash = jest.fn().mockResolvedValue("hashedPassword");
     jwt.sign = jest.fn().mockReturnValue("fakeToken");
 
-    // prisma.author.create = jest.fn().mockResolvedValue({
-    //   name: "test001",
-    //   password: "password",
-    //   age: 25,
-    // });
+    prisma.author.create = jest.fn().mockResolvedValue({
+      name: "test",
+      password: "password",
+      age: 25,
+    });
 
     const response = await request(app)
       .post("/api/auth/register")
