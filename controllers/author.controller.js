@@ -54,7 +54,7 @@ const getAuthor = async (req, res) => {
         role: true,
       },
     });
-    console.log(author);
+
     if (!author) {
       return res
         .status(StatusCodes.NOT_FOUND)

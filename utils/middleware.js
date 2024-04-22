@@ -16,4 +16,13 @@ function isUser(req, res, next) {
   next();
 }
 
-export { isAdmin, isUser };
+function isUserOrAdmin(req, res, next) {
+  const role = res.tokenData.author_role;
+  if (role !== "USER" && role !== "ADMIN")
+    return res
+      .status(StatusCodes.FORBIDDEN)
+      .json({ message: "Access denied, Not User or Admin" });
+  next();
+}
+
+export { isAdmin, isUser, isUserOrAdmin };
