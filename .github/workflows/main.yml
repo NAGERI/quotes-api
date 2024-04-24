@@ -9,13 +9,18 @@ on:
       - main
 
 jobs:
-  build:
+  setup-db:
     runs-on: ubuntu-latest
-
-    env:
-      DB_HOST: ${{ secrets.DB_HOST }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASS: ${{ secrets.DB_PASS }}
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: mydatabase
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
       - uses: actions/checkout@v2
@@ -25,11 +30,13 @@ jobs:
         with:
           node-version: "18.x"
 
-      - name: Run Prisma query
-        run: npx prisma query
-
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Run Prisma migrate dev
+        env:
+          DATABASE_URL: postgres://postgres:password@localhost:5432/mydatabase
+        run: npx prisma migrate dev --name init --create-db
 
       - name: Run tests with coverage
         run: |
