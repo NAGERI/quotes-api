@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  setup-db:
+  set-up-db:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -31,12 +31,13 @@ jobs:
           node-version: "18.x"
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm i
 
       - name: Run Prisma migrate dev
         env:
-          DATABASE_URL: postgres://postgres:password@localhost:5432/mydatabase
-        run: npx prisma migrate dev --name init --create-db
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma migrate dev --name init_test
 
       - name: Run tests with coverage
         run: |
