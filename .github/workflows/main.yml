@@ -7,16 +7,21 @@ on:
   pull_request:
     branches:
       - main
+
 env:
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: password
-  POSTGRES_DB: mydatabase
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
 jobs:
   set-up-db:
     runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: mydatabase
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -34,8 +39,6 @@ jobs:
           npm i
 
       - name: Run Prisma migrate dev
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npx prisma migrate dev --name init_test
 
       - name: Run tests with coverage
