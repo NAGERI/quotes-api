@@ -77,7 +77,7 @@ const getAuthor = async (req, res) => {
  */
 const updateAuthor = async (req, res) => {
   const { id } = req.params;
-  const { name, age } = req.body;
+  const { name, age, role } = req.body;
   if (!id) {
     return res
       .status(StatusCodes.NOT_ACCEPTABLE)
@@ -94,11 +94,12 @@ const updateAuthor = async (req, res) => {
         .json({ error: "Author not Found." });
     }
 
-    const updatedAuthor = await prisma.author.updateMany({
+    const updatedAuthor = await prisma.author.update({
       where: { id: Number(id) },
       data: {
         name,
         age,
+        role,
       },
     });
 

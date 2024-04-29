@@ -1,9 +1,3 @@
-// export default {
-//   transform: {},
-//   setupFiles: ["esm"],
-//   extensionsToTreatAsEsm: [".js"],
-// };
-
 export default {
   preset: "ts-jest",
   testEnvironment: "node",

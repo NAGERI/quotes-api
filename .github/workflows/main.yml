@@ -39,7 +39,7 @@ jobs:
           npm i
 
       - name: Run Prisma migrate dev
-        run: npx prisma migrate dev --name init_test
+        run: npx prisma migrate dev
 
       - name: Run tests with coverage
         run: |
