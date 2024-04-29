@@ -14,7 +14,7 @@ authorRouter
   .route("/")
   .get([checkReqForAuthToken, isUserOrAdmin], authors.getAllAuthors)
   .post(
-    [checkReqForAuthToken, validateReqAuthor, isAdmin],
+    [checkReqForAuthToken, validateReqAuthor, isUserOrAdmin],
     authors.createAuthor
   );
 
@@ -22,8 +22,8 @@ authorRouter
   .route("/:id")
   .get([checkReqForAuthToken, isUserOrAdmin], authors.getAuthor)
   .patch(
-    [checkReqForAuthToken, validateUpdateReqAuthor, isAdmin],
+    [checkReqForAuthToken, validateUpdateReqAuthor, isUserOrAdmin],
     authors.updateAuthor
   )
-  .delete([checkReqForAuthToken, isAdmin], authors.deleteAuthor);
+  .delete([checkReqForAuthToken, isUserOrAdmin], authors.deleteAuthor);
 export default authorRouter;

@@ -7,7 +7,7 @@
   "scripts": {
     "start": "nodemon index.js",
     "prisma": "npx prisma migrate dev",
-    "test": "jest --detectOpenHandles"
+    "test": "npx jest"
   },
   "author": "",
   "license": "ISC",
