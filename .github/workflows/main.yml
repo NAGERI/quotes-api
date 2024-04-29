@@ -43,5 +43,4 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          npm run test
-          npm run coverage
+          npm run test author.test

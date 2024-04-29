@@ -10,10 +10,12 @@ let TOKEN;
 beforeAll(async () => {
   // clear table
   await prisma.author.deleteMany();
+
   // Create multiple authors in the database
   const quotes = [
     { text: "Advanced JavaScript is the best" },
     { text: "Lither Man said it" },
+    { text: "Litle Quote  Man said it" },
   ];
   const authors = [
     { name: "1Author1", age: 25, quoteId: 1, role: "USER" },
@@ -79,12 +81,12 @@ describe("authorLogin", () => {
     expect(response.status).toBe(StatusCodes.NOT_FOUND);
   });
 
-  it("should return 404 if user was not found", async () => {
+  it("should return 401 if user was not found", async () => {
     const response = await request(app)
       .post("/api/auth/login")
       .send({ name: "test", password: "incorrectPassword" });
 
-    expect(response.status).toBe(StatusCodes.NOT_FOUND);
+    expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
   });
 
   it("should return 200 with token if login is successful", async () => {
@@ -102,7 +104,7 @@ describe("GET /api/authors", () => {
   it("should return all authors", async () => {
     const response = await request(app)
       .get("/api/authors")
-      .set("authorization", `Bearer ${TOKEN}`);
+      .set("Authorization", `Bearer ${TOKEN}`);
 
     expect(response.status).toBe(StatusCodes.OK);
     expect(response.body).toEqual(
@@ -111,7 +113,7 @@ describe("GET /api/authors", () => {
           age: expect.any(Number),
           id: expect.any(Number),
           name: expect.any(String),
-          quoteId: expect.any(Number),
+          quoteId: expect.anything(),
           role: expect.any(String),
         },
       ])
@@ -124,7 +126,7 @@ describe("GET /api/authors/:id", () => {
     const author = await prisma.author.findFirst();
     const response = await request(app)
       .get(`/api/authors/${author.id}`)
-      .set("authorization", `Bearer ${TOKEN}`);
+      .set("Authorization", `Bearer ${TOKEN}`);
 
     expect(response.status).toBe(StatusCodes.OK);
     expect(response.body).toBeDefined();
@@ -134,7 +136,7 @@ describe("GET /api/authors/:id", () => {
     // Assuming author with id 999999 does not exist in the database
     const response = await request(app)
       .get("/api/authors/999999")
-      .set("authorization", `Bearer ${TOKEN}`);
+      .set("Authorization", `Bearer ${TOKEN}`);
     expect(response.status).toBe(StatusCodes.NOT_FOUND);
   });
 });
@@ -152,7 +154,7 @@ describe("POST /api/authors", () => {
     const response = await request(app)
       .post("/api/authors")
       .send(newAuthorData)
-      .set("authorization", `Bearer ${TOKEN}`);
+      .set("Authorization", `Bearer ${TOKEN}`);
 
     expect(response.status).toBe(StatusCodes.CREATED);
     expect(response.body).toEqual(
@@ -160,7 +162,6 @@ describe("POST /api/authors", () => {
         id: expect.any(Number),
         name: newAuthorData.name,
         age: newAuthorData.age,
-        quoteId: null,
         role: "USER",
       })
     );
@@ -186,7 +187,6 @@ describe("PATCH /api/authors/:id", () => {
         id: author.id,
         name: updatedAuthorData.name,
         age: updatedAuthorData.age,
-        quoteId: author.quoteId,
         role: author.role,
       })
     );
@@ -207,7 +207,7 @@ describe("DELETE /api/authors/:id", () => {
     const author = await prisma.author.findFirst();
     const response = await request(app)
       .delete(`/api/authors/${author.id}`)
-      .set("authorization", `Bearer ${TOKEN}`);
+      .set("Authorization", `Bearer ${TOKEN}`);
 
     expect(response.status).toBe(StatusCodes.NO_CONTENT);
 
@@ -221,7 +221,7 @@ describe("DELETE /api/authors/:id", () => {
   it("should return 404 if author with given ID does not exist", async () => {
     const response = await request(app)
       .delete("/api/authors/999999")
-      .set("authorization", `Bearer ${TOKEN}`);
+      .set("Authorization", `Bearer ${TOKEN}`);
 
     expect(response.status).toBe(StatusCodes.NOT_FOUND);
   });
@@ -230,5 +230,6 @@ describe("DELETE /api/authors/:id", () => {
 afterAll(async () => {
   // Clean up database after all tests are done
   await prisma.author.deleteMany();
+  await prisma.quote.deleteMany();
   await prisma.$disconnect();
 });

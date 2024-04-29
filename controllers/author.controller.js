@@ -209,7 +209,7 @@ const authorLogin = async (req, res) => {
         .json({ message: "Login Successful ✔", token });
     } else {
       return res
-        .status(StatusCodes.NOT_FOUND)
+        .status(StatusCodes.UNAUTHORIZED)
         .json({ message: "Access denied ✖ Password is incorrect!" });
     }
   } catch (error) {
